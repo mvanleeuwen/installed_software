@@ -19,11 +19,25 @@ SED=$(which sed)
 
 # Create the installed software list.
 sudo $YUM list installed > $TMPDIR/$EXPORTFILE
+# Clean up the file
+$SED -i 's/\@epel//g' $TMPDIR/$EXPORTFILE
+$SED -i 's/\@sl//g' $TMPDIR/$EXPORTFILE
+$SED -i 's/\-security//g' $TMPDIR/$EXPORTFILE
+$SED -i 's/\@anaconda//g' $TMPDIR/$EXPORTFILE
+$SED -i 's/\-ScientificLinux*//g' $TMPDIR/$EXPORTFILE
+$SED -i 's/\@rpmforge//g' $TMPDIR/$EXPORTFILE
+$SED -i '/^\s*$/d' $TMPDIR/$EXPORTFILE
+#$SED -i 's/#.*//' -i 's/[ ^I]*$//' -i '/^$/ d'  $TMPDIR/$EXPORTFILE
 # Filter the export file and make it , seperated
 $CAT $TMPDIR/$EXPORTFILE | $AWK {'print "|-\n| " $1 "\n| " $2'} > $TMPDIR/$TMPFILE
 # Remove the first 6 lines from the file
-$SED '1,6d' $TMPDIR/$TMPFILE > $PWD/$TARGETFILE
-#
+echo "{| class=i\"collapsible sortable datatable\"" > $PWD/$TARGETFILE
+echo "!width=70%|Software" >> $PWD/$TARGETFILE
+echo "!width=30%|Version" >> $PWD/$TARGETFILE
+$SED '1,6d' $TMPDIR/$TMPFILE >> $PWD/$TARGETFILE
+$SED -i 's/\| //g' $PWD/$TARGETFILE
+$SED -i 's/\|//g' $PWD/$TARGETFILE
+echo "|}" >> $PWD/$TARGETFILE
 # This will create Media Wiki import file as seen in the example below.
 # this can be used to paste into the Packages list
 #
