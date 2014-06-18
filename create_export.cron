@@ -1,0 +1,12 @@
+#!/bin/bash
+#
+# Author: Martijn van Leeuwen
+#
+# ToDo: Make it good looking and managable.
+#
+# It's now quick and very dirty
+#
+# Create the installed software list.
+sudo yum list installed > installed.software.lst
+# Filter the export file and make it , seperated
+cat installed.software.lst | awk {'print $1 "," $2'} > installed.software.list
