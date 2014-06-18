@@ -6,7 +6,37 @@
 #
 # It's now quick and very dirty
 #
+# Settings
+TMPDIR=/tmp
+TMPFILE=$TIMPDIR/IS.list
+EXPORTFILE=installed.software.lst
+TARGETFILE=installed.software.list
+TARGETDIR=$(pwd)
+AWK=$(which awk)
+YUM=$(which yum)
+CAT=$(which cat)
+SED=$(which sed)
+
 # Create the installed software list.
-sudo yum list installed > installed.software.lst
+sudo $YUM list installed > $TMPDIR/$EXPORTFILE
 # Filter the export file and make it , seperated
-cat installed.software.lst | awk {'print $1 "," $2'} > installed.software.list
+$CAT $TMPDIR/$EXPORTFILE | $AWK {'print "|-\n| " $1 "\n| " $2'} > $TMPDIR/$TMPFILE
+# Remove the first 6 lines from the file
+$SED '1,6d' $TMPDIR/$TMPFILE > $PWD/$TARGETFILE
+#
+# This will create Media Wiki import file as seen in the example below.
+# this can be used to paste into the Packages list
+#
+# Example:
+#
+# {| class="collapsible sortable datatable"
+#!width=70%|Software
+#!width=30%|Version
+#|-
+#|Name of the software package
+#|#version
+#|-
+#| openldap.x86_64
+#| 2.4.23-34.el6_5.1
+#|-
+#|}
